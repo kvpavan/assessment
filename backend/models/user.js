@@ -120,7 +120,12 @@ exports.User = {
             return false;            
         }
         this.findByEmail(d_token[1]).then(user => { 
-            if(user.token !== d_token[2]){                
+            if(!user){
+                res.json({error: "Invalid link"});
+                return false;
+            }
+            if(user[0].token !== d_token[2]){           
+                console.log(user[0].token, d_token[2])     
                 res.json({error: "link expired. resend token"});
                 return false;
             }
@@ -128,7 +133,7 @@ exports.User = {
             var token = crypto.randomBytes(20).toString('hex');            
             token = encrypt(token);
 
-            req.body.pw = encrypt(req.body.pw);
+            req.body.password = encrypt(req.body.password);
             var pw = " password='"+req.body.password+"' ";
             //console.log("UPDATE users SET " + pw + ", token='"+token+"', last_login=now(), status = 3 where uuid = '"+user[0].uuid+"'")
             this.queryRun("UPDATE users SET " + pw + ", token='"+token+"', last_login=now(), status = 3 where uuid = '"+user[0].uuid+"'")
@@ -153,7 +158,7 @@ exports.User = {
                 secure: false, // true for 465, false for other ports
                 auth: {
                   user: 'apikey', // generated ethereal user
-                  pass: process.env.sendgrid_key, // generated ethereal password
+                  pass: decrypt(process.env.sendgrid_key), // generated ethereal password
                 },
                 tls: {
                     rejectUnauthorized: false
