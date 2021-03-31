@@ -27,19 +27,18 @@ class UserModal extends Component {
         const { name, email, password, confirm_password, type, age, salary, submitted, save } = this.props.user;
                         
         return (
-            <MDBContainer>
-                    (<div>                      
-                    <MDBRow> 
-                      <MDBCol className="mb-3"> 
-                        <h4>List of Employees</h4>
-                      </MDBCol>
-                      <MDBCol className="mb-2 offset-7"> 
-                          <MDBBtn  color="primary" onClick={()=>this.props.toggle(false)}>
-                              <MDBIcon icon="plus" />&nbsp;&nbsp; Add Users
-                          </MDBBtn>
-                      </MDBCol>
-                    </MDBRow>
-                    </div>)
+            <MDBContainer>                   
+                <MDBRow> 
+                  <MDBCol className="mb-3"> 
+                    <h4>List of Employees</h4>
+                  </MDBCol>
+                  <MDBCol className="mb-2 offset-7"> 
+                      <MDBBtn  color="primary" onClick={()=>this.props.toggle(false)}>
+                          <MDBIcon icon="plus" />&nbsp;&nbsp; Add Users
+                      </MDBBtn>
+                  </MDBCol>
+                </MDBRow>
+                    
                 
                 
                 <MDBModal isOpen={this.props.modal} toggle={this.props.toggle}>

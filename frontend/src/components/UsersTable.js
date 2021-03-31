@@ -120,12 +120,10 @@ class UsersTable extends Component {
                         'searchable': false,
                         'orderable': false,
                         'render': function (data, type, row) {
-                            var deleteBtn = '';
-                            if(user.type === 5){
-                                deleteBtn =  '    <button type="button" onClick="window.deleteUser(\''+ row.uuid +'\')" data-toggle="modal" class="btn btn-danger btn-sm" >' +
+                            var deleteBtn =  '    <button type="button" onClick="window.deleteUser(\''+ row.uuid +'\')" data-toggle="modal" class="btn btn-danger btn-sm" >' +
                                 '		<i class="fa fa-window-close"></i>' +
                                 '	</button>';
-                            }
+                            
                             return '<div class="btn-group btn-group-xs">' +
                                     '	<button type="button" onClick="window.toggle('+JSON.stringify(row).replace(/'/g, '&apos;').replace(/"/g, '&quot;') +')" data-toggle="modal" class="btn btn-primary btn-sm" >' +
                                     '		<i class="fa fa-edit"></i>' +
