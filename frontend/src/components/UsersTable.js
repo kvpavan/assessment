@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-
+import { signOut } from '../actions/authActions';
 import '../assets/css/datatable.css';
 
 import Swal from 'sweetalert2'
@@ -11,12 +11,6 @@ const MySwal = withReactContent(Swal)
 
 const $ = require('jquery');
 $.DataTable = require('datatables.net');
-
-if(localStorage.getItem('user')){    
-    var user = JSON.parse(localStorage.getItem('user'));
-    var Store = user.default_store;
-    var Type = user.type;
-}
 
 
 class UsersTable extends Component {
@@ -59,18 +53,21 @@ class UsersTable extends Component {
     }
     fetchData = function() {           
     
-        var userData = localStorage.getItem("user");
-        var user = JSON.parse(userData);
-
         $(this.refs.main).DataTable({
             "ajax": {
                 "url": 'http://'+process.env.REACT_APP_HOST+'/api/users/list',
-                "type":"get",
+                "type":"get",                
+                'beforeSend': function (request) {
+                    request.setRequestHeader("token", JSON.parse(localStorage.getItem('user')).token);
+                },
                 "data": { 
-                           "Store" : Store,
-                           "Type" : Type
+                          
                         },
-                "dataSrc": function(users){
+                "dataSrc": function(users){                    
+                    if(typeof users.status != 'undefined' && users.status === 'unauthorised'){
+                        signOut([]);
+                        return;
+                    }
                     //console.log(prop)
                     return users;
                 }

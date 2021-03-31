@@ -7,6 +7,7 @@ import UserModal  from '../components/UserModal';
 import { validateEmail } from '../helpers'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import { signOut } from '../actions/authActions';
 
 const MySwal = withReactContent(Swal)
 
@@ -101,12 +102,18 @@ class Dashboard extends React.Component {
         method: 'POST',
         headers: {
           'accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Token': JSON.parse(localStorage.getItem('user')).token
         },
         body: JSON.stringify(this.state.user)
       })
       .then(response => response.json())
       .then(json => {
+        
+        if(typeof json.status != 'undefined' && json.status === 'unauthorised'){
+          signOut([]);
+          return;
+        }
         if(json.status === 'success'){
           this.toggle();
           this.setState({reload : !this.state.reload});

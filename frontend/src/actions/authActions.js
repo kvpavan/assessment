@@ -23,7 +23,7 @@ export function submitLogin(email, password, history, action = 'login'){
       method: 'POST',
       headers: {
         'accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         email: email,

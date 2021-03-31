@@ -19,7 +19,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 //middleware token validation 
-app.use('/api/notifications/list', function (req, res, next) {
+app.use('/api', function (req, res, next) {
   
   res.header('Access-Control-Allow-Origin', "*");
   res.header('Access-Control-Allow-Headers', "*");
@@ -32,7 +32,7 @@ app.use('/api/notifications/list', function (req, res, next) {
         next();
       }
       else{
-        res.json({"status":"error", "message":"Token mismatch failed!!!"})
+        res.json({"status":"unauthorised", "message":"Token mismatch failed!!!"})
       }
     });  
   }
