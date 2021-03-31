@@ -89,7 +89,6 @@ exports.User = {
     },
     list: async function (req, res) {  
         
-        //console.log(encrypt('testpass'))      
         var age = req.query.age || false;
         var type = req.query.Type || false;
         var min = req.query.min || 0;
@@ -154,7 +153,7 @@ exports.User = {
                 secure: false, // true for 465, false for other ports
                 auth: {
                   user: 'apikey', // generated ethereal user
-                  pass: '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', // generated ethereal password
+                  pass: process.env.sendgrid_key, // generated ethereal password
                 },
                 tls: {
                     rejectUnauthorized: false
