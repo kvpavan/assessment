@@ -1,5 +1,7 @@
 const pool = require("../mysql_connect");
 const crypto = require("crypto");
+const Cryptr = require('cryptr');
+const { encrypt, decrypt } = new Cryptr(process.env.crypto_secret);
 
 const nodemailer = require("nodemailer");
 
@@ -23,7 +25,11 @@ exports.User = {
     update: function (req, res) {
         var pw = '';
         var token = crypto.randomBytes(20).toString('hex');
-        if(req.body.password != 'Password'){
+        
+        token = encrypt(token);
+
+        if(req.body.password != 'gsrdgsgdgfgxdfg'){
+            req.body.pw = encrypt(req.body.pw);
             pw = " , password='"+req.body.password+"' ";
         }
         this.queryRun("UPDATE users SET name = '"+req.body.name+"', email = '"+req.body.email+"', parent_id = '"+req.body.parent_id+"', type = '"+req.body.type+"', age = '"+req.body.age+"', salary = '"+req.body.salary+"' " + pw + ", token='"+token+"', status = 3 where uuid = '"+req.body.id+"'")
@@ -55,8 +61,13 @@ exports.User = {
             }
             var UserData = data[0];
             //console.log(data);
+            
+            UserData.password = decrypt(UserData.password)
+            //console.log(UserData.password, req.body.password)
             if(UserData.password == req.body.password){
-                var token = crypto.randomBytes(20).toString('hex');
+                var token = crypto.randomBytes(20).toString('hex');        
+                token = encrypt(token);
+        
                 this.queryRun("UPDATE users SET last_login = now(), token='"+token+"' where uuid = '"+UserData.uuid+"'")
                 .then(data=>{
                     UserData.token = token;
@@ -76,7 +87,9 @@ exports.User = {
             res.json(error)
         });
     },
-    list: async function (req, res) {           
+    list: async function (req, res) {  
+        
+        //console.log(encrypt('testpass'))      
         var age = req.query.age || false;
         var type = req.query.Type || false;
         var min = req.query.min || 0;
@@ -112,10 +125,13 @@ exports.User = {
                 res.json({error: "link expired. resend token"});
                 return false;
             }
-            var pw = '';
-            var token = crypto.randomBytes(20).toString('hex');
-            pw = " password='"+req.body.password+"' ";
-            console.log("UPDATE users SET " + pw + ", token='"+token+"', last_login=now(), status = 3 where uuid = '"+user[0].uuid+"'")
+            
+            var token = crypto.randomBytes(20).toString('hex');            
+            token = encrypt(token);
+
+            req.body.pw = encrypt(req.body.pw);
+            var pw = " password='"+req.body.password+"' ";
+            //console.log("UPDATE users SET " + pw + ", token='"+token+"', last_login=now(), status = 3 where uuid = '"+user[0].uuid+"'")
             this.queryRun("UPDATE users SET " + pw + ", token='"+token+"', last_login=now(), status = 3 where uuid = '"+user[0].uuid+"'")
             .then(data=>{
                 res.json({status: "success", "message": "User password updated successfully!!!"})
@@ -185,7 +201,8 @@ exports.User = {
             throw error;
         });
     },
-    validateToken: function (token) {           
+    validateToken: function (token) {          
+                
         return this.queryRun("select * from users where status=3 and token='"+token+"' and date(last_login) = current_date()")
         .then(data=>{
             if(data.length === 1){

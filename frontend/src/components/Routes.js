@@ -9,9 +9,6 @@ class Routes extends React.Component {
     return (
       <Switch>
         
-        <Route exact path="/">
-              <Redirect to="/login" />
-          </Route>
         <PrivateRoute exact path="/">
               <Redirect to="/" />
           </PrivateRoute>

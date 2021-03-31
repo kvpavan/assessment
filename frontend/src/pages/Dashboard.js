@@ -33,12 +33,9 @@ class Dashboard extends React.Component {
     stateData.user.age = '';
     stateData.user.salary = '';
     if(data){
-      if(data.type === 3){
-        this.fetchZones(data.store)
-      }
       data.save = 'Update';
-      data.password = 'Password';
-      data.confirm_password = 'Password';
+      data.password = 'gsrdgsgdgfgxdfg';
+      data.confirm_password = 'gsrdgsgdgfgxdfg';
       stateData.user = data;
     }
     stateData.modal = !this.state.modal
