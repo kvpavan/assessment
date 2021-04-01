@@ -17,27 +17,30 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
-
-//middleware token validation 
 app.use('/api', function (req, res, next) {
-  
   res.header('Access-Control-Allow-Origin', "*");
   res.header('Access-Control-Allow-Headers', "*");
+  next();
+});
 
+//middleware token validation 
+app.use('/api/users', function (req, res, next) {  
   var token = req.get('Token');
+  console.log(token)
   if(token){
     const Users = require("./models/user");
     Users.User.validateToken(token).then(user => {
+      console.log(user)
       if (user) {
         next();
       }
       else{
-        res.json({"status":"unauthorised", "message":"Token mismatch failed!!!"})
+        res.json({"status":"unauthorised", "message":"Token mismatch!!!"})
       }
     });  
   }
   else{    
-    next();
+    res.json({"status":"unauthorised", "message":"Token missed!!!"})
   }
   
 });

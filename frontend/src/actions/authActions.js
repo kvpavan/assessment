@@ -19,7 +19,7 @@ export function submitLogin(email, password, history, action = 'login'){
     dispatch(request())
 
     
-    fetch("http://"+process.env.REACT_APP_HOST+"/api/users/"+action,{
+    fetch("http://"+process.env.REACT_APP_HOST+"/api/"+action,{
       method: 'POST',
       headers: {
         'accept': 'application/json',
@@ -32,6 +32,7 @@ export function submitLogin(email, password, history, action = 'login'){
     })
     .then(response => response.json())
     .then(json => {
+      debugger;
       //console.log(json)
       if(json.status === 'error' ){
         dispatch(failure(json))

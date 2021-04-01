@@ -28,7 +28,7 @@ class Forgot extends React.Component {
   submitForgot = (e) => {
     e.preventDefault()
     this.setState({ forgotError: '', submitted: true, isLoading: true})
-    fetch("http://"+process.env.REACT_APP_HOST+"/api/users/forgot",{
+    fetch("http://"+process.env.REACT_APP_HOST+"/api/forgot",{
       method: 'POST',
       headers: {
         'accept': 'application/json',

@@ -1,7 +1,7 @@
 const pool = require("../mysql_connect");
+const crypto = require("crypto");
 const Cryptr = require('cryptr');
 const { encrypt, decrypt } = new Cryptr(process.env.crypto_secret);
-var jwt = require('jsonwebtoken');
 
 const nodemailer = require("nodemailer");
 
@@ -24,11 +24,15 @@ exports.User = {
     },
     update: function (req, res) {
         var pw = '';
+        var token = crypto.randomBytes(20).toString('hex');
+        
+        token = encrypt(token);
+
         if(req.body.password != 'gsrdgsgdgfgxdfg'){
-            req.body.password = encrypt(req.body.password);
+            req.body.pw = encrypt(req.body.pw);
             pw = " , password='"+req.body.password+"' ";
         }
-        this.queryRun("UPDATE users SET name = '"+req.body.name+"', email = '"+req.body.email+"', parent_id = '"+req.body.parent_id+"', type = '"+req.body.type+"', age = '"+req.body.age+"', salary = '"+req.body.salary+"' " + pw + ", status = 3 where uuid = '"+req.body.id+"'")
+        this.queryRun("UPDATE users SET name = '"+req.body.name+"', email = '"+req.body.email+"', parent_id = '"+req.body.parent_id+"', type = '"+req.body.type+"', age = '"+req.body.age+"', salary = '"+req.body.salary+"' " + pw + ", token='"+token+"', status = 3 where uuid = '"+req.body.id+"'")
         .then(data=>{
             res.json({status: "success", "message": "User updated successfully!!!"})
         })
@@ -61,8 +65,10 @@ exports.User = {
             UserData.password = decrypt(UserData.password)
             //console.log(UserData.password, req.body.password)
             if(UserData.password == req.body.password){
-                var token = this.createToken(UserData.uuid);        
-                this.queryRun("UPDATE users SET last_login = now() where uuid = '"+UserData.uuid+"'")
+                var token = crypto.randomBytes(20).toString('hex');        
+                token = encrypt(token);
+        
+                this.queryRun("UPDATE users SET last_login = now(), token='"+token+"' where uuid = '"+UserData.uuid+"'")
                 .then(data=>{
                     UserData.token = token;
                     res.json(UserData)
@@ -124,10 +130,13 @@ exports.User = {
                 return false;
             }
             
+            var token = crypto.randomBytes(20).toString('hex');            
+            token = encrypt(token);
+
             req.body.password = encrypt(req.body.password);
             var pw = " password='"+req.body.password+"' ";
             //console.log("UPDATE users SET " + pw + ", token='"+token+"', last_login=now(), status = 3 where uuid = '"+user[0].uuid+"'")
-            this.queryRun("UPDATE users SET " + pw + ", last_login=now(), status = 3 where uuid = '"+user[0].uuid+"'")
+            this.queryRun("UPDATE users SET " + pw + ", token='"+token+"', last_login=now(), status = 3 where uuid = '"+user[0].uuid+"'")
             .then(data=>{
                 res.json({status: "success", "message": "User password updated successfully!!!"})
             })
@@ -181,19 +190,9 @@ exports.User = {
             res.json(error)
         });
     },
-    findByEmail: function (email = null, id=null) {  
-        var where = ''; 
-        where = email ? " where email='"+email+"' " : '';
-        if(where){
-            where += id ? " and uuid != '"+id+"'" : "";
-        }
-        else{
-            where = id ? " where uuid='"+id+"' " : '';
-        }
-
-        if(!where) return false;
-
-        return this.queryRun("select * from users " + where)
+    findByEmail: function (email, id=null) {           
+        var where = (id) ? " and uuid != '"+id+"'" : "";
+        return this.queryRun("select * from users where email='"+email+"'" + where)
         .then(data=>{
             if(data.length > 0){
                 return data;
@@ -206,17 +205,19 @@ exports.User = {
             throw error;
         });
     },
-    createToken : function(id, expiresIn = 86400){
-        var token = jwt.sign({ id: id }, process.env.crypto_secret, {
-            expiresIn: expiresIn // expires in 24 hours
-        });
-        return token;
-    },
-    validateToken: async function (token) {          
-        return jwt.verify(token, process.env.crypto_secret, function(err, decoded) {
-            //console.log(err, decoded)
-            if (err) return false;
-            return decoded;
+    validateToken: function (token) {          
+                
+        return this.queryRun("select * from users where status=3 and token='"+token+"' and date(last_login) = current_date()")
+        .then(data=>{
+            if(data.length === 1){
+                return data;
+            }
+            else{
+                return false
+            }
+        })
+        .catch(function(error){
+            throw error;
         });
     },
     queryRun: function (sql) {

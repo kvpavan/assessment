@@ -30,7 +30,7 @@ class Reset extends React.Component {
     let query =  new URLSearchParams(this.props.location.search);
     let token = query.get('token')
     this.setState({ resetError: '', submitted: true, isLoading: true})
-    fetch("http://"+process.env.REACT_APP_HOST+"/api/users/reset",{
+    fetch("http://"+process.env.REACT_APP_HOST+"/api/reset",{
       method: 'POST',
       headers: {
         'accept': 'application/json',

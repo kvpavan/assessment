@@ -86,7 +86,7 @@ class Login extends React.Component {
                                 size="lg"
                                 type="submit"
                                 color="dark"
-                                onClick={(e) => this.submitLogin(e, 'create')}>
+                                onClick={(e) => this.submitLogin(e, 'register')}>
                                 New Signup
                                 </MDBBtn>                       
                         </MDBCol>
