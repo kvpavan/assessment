@@ -119,7 +119,7 @@ exports.User = {
                 return false;
             }
             if(user[0].token !== d_token[2]){           
-                console.log(user[0].token, d_token[2])     
+                //console.log(user[0].token, d_token[2])     
                 res.json({error: "link expired. resend token"});
                 return false;
             }

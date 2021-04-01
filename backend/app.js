@@ -26,7 +26,7 @@ app.use('/api', function (req, res, next) {
 //middleware token validation 
 app.use('/api/users', function (req, res, next) {  
   var token = req.get('Token');
-  console.log(token)
+  //console.log(token)
   if(token){
     const Users = require("./models/user");
     Users.User.validateToken(token).then(user => {

@@ -32,7 +32,6 @@ export function submitLogin(email, password, history, action = 'login'){
     })
     .then(response => response.json())
     .then(json => {
-      debugger;
       //console.log(json)
       if(json.status === 'error' ){
         dispatch(failure(json))
