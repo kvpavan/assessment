@@ -12,6 +12,8 @@ exports.User = {
         req.body.age = req.body.age || Math.floor(Math.random() * (50 - 23) ) + 23;
         req.body.salary = req.body.salary || Math.floor(Math.random() * (50000 - 3000) ) + 3000;
         req.body.parent_id = req.body.parent_id || '';
+        
+        req.body.password = encrypt(req.body.password);
 
         this.queryRun("insert into users (uuid, name, email, password, type, parent_id, age, salary, status, added_on) values (uuid(), '"+req.body.name+"', '"+req.body.email+"', '"+req.body.password+"', '"+req.body.type+"', '"+req.body.parent_id+"', '"+req.body.age+"', '"+req.body.salary+"', '3', now())")
         .then(data=>{
