@@ -50,7 +50,7 @@ class Reset extends React.Component {
       }
       else{
         alert('password reset succeful!!');
-        //window.location = '/login';
+        window.location = '/login';
       }
     })
     .catch(error => {

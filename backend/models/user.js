@@ -120,7 +120,7 @@ exports.User = {
                 res.json({error: "Invalid link"});
                 return false;
             }
-            if(user[0].token !== d_token[2]){           
+            if(user[0].uuid !== d_token[2]){           
                 //console.log(user[0].token, d_token[2])     
                 res.json({error: "link expired. resend token"});
                 return false;
@@ -143,7 +143,7 @@ exports.User = {
     forgot: async function (req, res) {
         this.findByEmail(req.body.email).then(user => { 
             
-            var token = Buffer.from(Math.floor(new Date().getTime() / 1000)+':'+user[0].email+':'+user[0].token).toString('base64')
+            var token = Buffer.from(Math.floor(new Date().getTime() / 1000)+':'+user[0].email+':'+user[0].uuid).toString('base64')
             var link = 'http://'+process.env.react_host+'/reset?token='+token;  
             let transporter = nodemailer.createTransport({
                 host: "smtp.sendgrid.net",
