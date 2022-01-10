@@ -19,8 +19,8 @@ const router = express.Router();
 
 router.post('/users/create', validateUserCreate, users_create);
 router.post('/users/update', validateUserUpdate, users_update);
-router.post('/users/delete', validateUserCreate, users_delete);
-router.post('/register', validateUserDelete, users_create);
+router.post('/users/delete', validateUserDelete, users_delete);
+router.post('/register', validateUserCreate, users_create);
 router.post('/login', validateUserLogin, users_login);
 router.post('/reset', validateUserReset, users_reset);
 router.post('/forgot', validateUserForgot, users_forgot);

@@ -17,6 +17,12 @@ class SideNavigation extends React.Component {
 							Employees
 						</MDBListGroupItem>
 					</NavLink>
+					<NavLink to="/maps" onClick={() => this.props.setActive('maps')} activeClassName="activeClass">
+						<MDBListGroupItem>
+							<MDBIcon icon="map" className="mr-3"/>
+							Maps
+						</MDBListGroupItem>
+					</NavLink>
 					<NavLink to="/search" onClick={() => this.props.setActive('organisation')} activeClassName="activeClass">
 						<MDBListGroupItem>
 							<MDBIcon icon="building" className="mr-3"/>

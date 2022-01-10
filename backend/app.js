@@ -30,7 +30,7 @@ app.use('/api/users', function (req, res, next) {
   if(token){
     const Users = require("./models/user");
     Users.User.validateToken(token).then(user => {
-      console.log(user)
+      //console.log(user)
       if (user) {
         next();
       }
