@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from 'react-redux';
+//import { connect } from 'react-redux';
 import { MDBCard, MDBCardBody, MDBRow, MDBCol } from 'mdbreact';
 import { Doughnut } from 'react-chartjs-2';
 import UsersTable  from '../components/UsersTable';
@@ -215,17 +215,14 @@ class Dashboard extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-  };
-}
+// function mapStateToProps(state) {
+//   return {
+//   };
+// }
 
-function mapDispatchToProps(dispatch) {
-  return {
-  };
-}
+// function mapDispatchToProps(dispatch) {
+//   return {
+//   };
+// }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Dashboard);
+export default Dashboard;

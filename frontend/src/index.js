@@ -2,20 +2,18 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import configureStore from './store/configureStore';
-import { Provider } from 'react-redux'
+//import configureStore from './store/configureStore';
+//import { Provider } from 'react-redux'
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap-css-only/css/bootstrap.min.css';
 import 'mdbreact/dist/css/mdb.css';
 import './index.css';
 import { BrowserRouter as Router } from 'react-router-dom';
 
-const store = configureStore();
+//const store = configureStore();
 
 ReactDOM.render(
-  <Provider store={store}>
-    <Router><App /></Router>
-  </Provider>, document.getElementById('root')
+    <Router><App /></Router>, document.getElementById('root')
 );
 
 // If you want your app to work offline and load faster, you can change
