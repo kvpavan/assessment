@@ -5,7 +5,7 @@ import { LoadScript } from '@react-google-maps/api';
 function ScriptLoaded() {
   return (
     <LoadScript
-      googleMapsApiKey="GOOGLEMAP_API_KEY"
+      googleMapsApiKey={process.env.GOOGLEMAP_API_KEY}
     >
     </LoadScript>
   )
