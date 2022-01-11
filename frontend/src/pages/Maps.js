@@ -104,7 +104,7 @@ export default () => {
     <React.Fragment>
       <LoadScript
         libraries={["drawing"]}
-        googleMapsApiKey="AIzaSyA0qe-Nm-I-wRVSHg__FQmbIIE9WNpbqms"
+        googleMapsApiKey="GOOGLEMAP_API_KEY"
       >
         <MDBContainer style={{ minHeight: "300px" }}>
           <h1>Maps</h1>
