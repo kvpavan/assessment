@@ -16,6 +16,26 @@ import {
   MDBCol,
 } from "mdbreact";
 
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+
+const MySwal = withReactContent(Swal);
+
+const addDescSwal = {
+  title: 'Change Password?',
+  focusConfirm: false,
+  html: `
+    <input class="swal2-input" id="description" type="text" placeholder="Enter description..." />
+  `,
+  type: 'success',
+  showCancelButton: true,
+  cancelButtonColor: 'grey',
+  confirmButtonText: 'Create!',
+  allowOutsideClick: false,
+  preConfirm: () => ({
+    description: document.getElementById('description').value
+  })
+};
 export default () => {
   const [lat, setLat] = useState("");
   const [lng, setLng] = useState("");
@@ -79,8 +99,23 @@ export default () => {
     console.log(drawingManager);
   };
 
-  const onPolygonComplete = (polygon) => {
+  const onPolygonComplete = async (polygon) => {
     //console.log(polygon)
+    
+    const swalval = await MySwal.fire(addDescSwal);
+    let v = swalval && swalval.value || swalval.dismiss;
+    console.log(v);
+    if (v && v.description || v === 'cancel') {
+      if (v === 'cancel') {          
+        polygon.setMap(null);
+        await MySwal.fire({ type: 'error', title: 'Polygon not saved!!' });
+        return false;
+      }
+    } else {      
+			polygon.setMap(null);
+      await MySwal.fire({ type: 'error', title: 'Description required!!' });
+      return false;
+    }
     let coords = [];
     for (var i = 0; i < polygon.getPath().getLength(); i++) {
       var coordinates = {
@@ -89,7 +124,9 @@ export default () => {
       };
       coords.push(coordinates);
     }
+
     console.log(coords);
+    localStorage.setItem("polygon_desc", v.description);
     localStorage.setItem("coords", JSON.stringify(coords));
     setPath(coords);
   };
