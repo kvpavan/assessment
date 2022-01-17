@@ -15,10 +15,11 @@ import {
   MDBRow,
   MDBCol,
 } from "mdbreact";
-
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 
+
+var classifyPoint = require("robust-point-in-polygon")
 const MySwal = withReactContent(Swal);
 
 const addDescSwal = {
@@ -39,13 +40,14 @@ const addDescSwal = {
 export default () => {
   const [lat, setLat] = useState("");
   const [lng, setLng] = useState("");
+  const [marker, setMarker] = useState(null);
   const [path, setPath] = useState([]);
   const [submitted, setSubmit] = useState(false);
 
   const checkPointer = () => {
     setSubmit(true);
     console.log(lat, lng);
-    isLatLngInZone();
+    isLatLngInZone(lat, lng);
   };
 
   const mapContainerStyle = {
@@ -64,29 +66,40 @@ export default () => {
     }
   }, []);
 
-  const isLatLngInZone = () => {
-    var x = lat,
-      y = lng,
-      vs = path;
-
-    var inside = false;
-    for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
-      var xi = vs[i].lat,
-        yi = vs[i].lng;
-      var xj = vs[j].lat,
-        yj = vs[j].lng;
-
-      var intersect =
-        (yi > y) !== (yj > y) && x < (((xj - xi) * (y - yi)) / (yj - yi) + xi);
-      if (intersect) inside = !inside;
-    }
-
-    if (inside) {
+  const isLatLngInZone = (lat, lng) => {
+    var polygon_arr = [ ];
+    path.forEach(pos=>{
+      polygon_arr.push([pos.lat, pos.lng]);
+    })
+    var marker_arr = [lat, lng];
+    if (classifyPoint(polygon_arr, marker_arr) <= 0) {
       alert("inside");
     } else {
       alert("outside");
     }
-    return inside;
+ 
+    // var x = lat,
+    //   y = lng,
+    //   vs = path;
+
+    // var inside = false;
+    // for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+    //   var xi = vs[i].lat,
+    //     yi = vs[i].lng;
+    //   var xj = vs[j].lat,
+    //     yj = vs[j].lng;
+
+    //   var intersect =
+    //     (yi > y) !== (yj > y) && x < (((xj - xi) * (y - yi)) / (yj - yi) + xi);
+    //   if (intersect) inside = !inside;
+    // }
+
+    // if (inside) {
+    //   alert("inside");
+    // } else {
+    //   alert("outside");
+    // }
+   // return inside;
   };
 
   const drawingControlOptions = {
@@ -103,9 +116,9 @@ export default () => {
     //console.log(polygon)
     
     const swalval = await MySwal.fire(addDescSwal);
-    let v = swalval && swalval.value || swalval.dismiss;
+    let v = (swalval && swalval.value) || swalval.dismiss;
     console.log(v);
-    if (v && v.description || v === 'cancel') {
+    if ((v && v.description) || v === 'cancel') {
       if (v === 'cancel') {          
         polygon.setMap(null);
         await MySwal.fire({ type: 'error', title: 'Polygon not saved!!' });
@@ -131,10 +144,14 @@ export default () => {
     setPath(coords);
   };
 
-  const onMarkerComplete = (marker) => {
-    setLat(marker.getPosition().lat());
-    setLng(marker.getPosition().lng());
-    isLatLngInZone();
+  const onMarkerComplete = (omarker) => {
+    if(marker){
+      marker.setMap(null);
+    }
+    setMarker(omarker);
+    setLat(omarker.getPosition().lat());
+    setLng(omarker.getPosition().lng());
+    isLatLngInZone(omarker.getPosition().lat(), omarker.getPosition().lng());
   };
 
   return (
@@ -161,7 +178,7 @@ export default () => {
                   options={drawingControlOptions}
                 />
                 {path.length && <Polygon path={path} />}
-                {lat && lng && <Marker position={{ lat, lng }} />}
+                {lat && lng && submitted && <Marker position={{ lat, lng }} />}
               </GoogleMap>
             </MDBCol>
 
@@ -177,12 +194,12 @@ export default () => {
                       <div className="grey-text">
                         <MDBInput
                           value={lat}
-                          onChange={(e) => setLat(e.target.value)}
+                          onChange={(e) => setLat(parseFloat(e.target.value))}
                           label="Latitude"
                           icon="pointer"
                           type="number"
                         >
-                          {submitted && lat && (
+                          {submitted && !lat && (
                             <div className="text-danger">
                               Latitude is required
                             </div>
@@ -191,12 +208,12 @@ export default () => {
 
                         <MDBInput
                           value={lng}
-                          onChange={(e) => setLng(e.target.value)}
+                          onChange={(e) => setLng(parseFloat(e.target.value))}
                           label="Longitude"
                           icon="pointer"
                           type="number"
                         >
-                          {submitted && lng && (
+                          {submitted && !lng && (
                             <div className="text-danger">
                               Longitude is required
                             </div>
@@ -208,8 +225,7 @@ export default () => {
                           <MDBBtn
                             size="lg"
                             color="primary"
-                            type="submit"
-                            onClick={(e) => checkPointer}
+                            onClick={(e) => checkPointer()}
                           >
                             Check
                           </MDBBtn>
